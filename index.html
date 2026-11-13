@@ -34,7 +34,18 @@
     if (!k) { msg('افتح الرابط الكامل اللي وصلك أول مرة، وبعدها يتذكره الجوال.'); return; }
     window.MT_EXEC = EXEC;
     var SAFE = '<style id="mt-safe">body{padding-top:calc(12px + env(safe-area-inset-top))!important}.wo-in{padding-top:calc(14px + env(safe-area-inset-top))!important}.st-in{padding-top:calc(12px + env(safe-area-inset-top))!important}</style>';
-    var show = function (html) { html = html.indexOf('</head>') !== -1 ? html.replace('</head>', SAFE + '</head>') : SAFE + html; var go = function () { setTimeout(function () { document.open(); document.write(html); document.close(); }, 0); }; if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go(); };
+    var show = function (html) {
+      var go = function () {
+        var d = new DOMParser().parseFromString(html, 'text/html'), root = document.documentElement;
+        for (var a = 0; a < d.documentElement.attributes.length; a++) root.setAttribute(d.documentElement.attributes[a].name, d.documentElement.attributes[a].value);
+        d.head.insertAdjacentHTML('beforeend', SAFE);
+        root.replaceChild(document.adoptNode(d.head), document.head);
+        root.replaceChild(document.adoptNode(d.body), document.body);
+        var ss = document.body.querySelectorAll('script');
+        for (var i = 0; i < ss.length; i++) { var n = document.createElement('script'); n.textContent = ss[i].textContent; ss[i].parentNode.replaceChild(n, ss[i]); }
+      };
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+    };
     var cached = null;
     try { cached = localStorage.getItem('mt-html'); } catch (e) {}
     if (cached) { show(cached); return; }
