@@ -34,7 +34,7 @@
     if (!k) { msg('افتح الرابط الكامل اللي وصلك أول مرة، وبعدها يتذكره الجوال.'); return; }
     window.MT_EXEC = EXEC;
     var SAFE = '<style id="mt-safe">body{padding-top:calc(12px + env(safe-area-inset-top))!important}.wo-in{padding-top:calc(14px + env(safe-area-inset-top))!important}.st-in{padding-top:calc(12px + env(safe-area-inset-top))!important}</style>';
-    var show = function (html) { html = html.indexOf('</head>') !== -1 ? html.replace('</head>', SAFE + '</head>') : SAFE + html; document.open(); document.write(html); document.close(); };
+    var show = function (html) { html = html.indexOf('</head>') !== -1 ? html.replace('</head>', SAFE + '</head>') : SAFE + html; var go = function () { setTimeout(function () { document.open(); document.write(html); document.close(); }, 0); }; if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go(); };
     var cached = null;
     try { cached = localStorage.getItem('mt-html'); } catch (e) {}
     if (cached) { show(cached); return; }
